@@ -1,0 +1,22 @@
+body{
+    background-color: lightgrey;
+}
+h1{
+    color: blueviolet;
+    white-space: pre-line;
+    word-wrap: break-word;
+}
+#canvasdiv{
+    margin: auto;
+    width: 50%;
+}
+#leftdiv{
+    position: absolute;
+    left: 0;
+    width: 20%;
+    overflow: scroll;
+}
+#table{
+    overflow: scroll;
+    height: 70%;
+}
