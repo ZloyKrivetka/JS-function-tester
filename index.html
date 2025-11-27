@@ -2,7 +2,8 @@
 <!--<header>-->
 <!--    <h1>ajsdlaskdjlaksjdlk</h1>-->
 <!--</header>-->
-<body onload="drawcoordlines()">
+<body onload="drawcoordlines(addtasks())" >
+
 <div id="maindiv">
     <div id="leftdiv">
 
@@ -16,9 +17,13 @@
 
     </textarea>
     <br>
-    <button id = "check" onclick = "update()">Check</button>
+    <button id = "check" onclick = "update(1,addtasks())">Check</button>
 
     <button id = "draw" onclick = "guessdraw()">Draw</button>
+
+
+
+        <button id="reset" onclick="reset()">Reset</button>
     </div>
 </div>
 </body>

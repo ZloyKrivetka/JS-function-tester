@@ -1,32 +1,31 @@
-function drawcoordlines(){
+function drawcoordlines(arr){
     const canvas = document.getElementById("myCanvas");
     const ctx = canvas.getContext("2d");
-    ctx.rect(0, 0, 800, 800);
-    ctx.fillStyle = "#BCD7D4" ;
-    ctx.fill();
     ctx.translate(canvas.height/2,canvas.width/2)
     ctx.scale(1,-1)
-    for (let i = -canvas.height; i < canvas.height; i+=40) {
-        i === 0? ctx.strokeStyle = "black" : ctx.strokeStyle = "grey"
-        ctx.beginPath()
-        ctx.moveTo(canvas.width,i)
-        ctx.lineTo(-canvas.width,i)
-        ctx.stroke()
-    }
-    for (let i = -canvas.width; i < canvas.width; i+=40) {
-        i === 0? ctx.strokeStyle = "#000000" : ctx.strokeStyle = "grey"
-        ctx.beginPath()
-        ctx.moveTo(i,-canvas.height)
-        ctx.lineTo(i,canvas.height)
-        ctx.stroke()
-    }
-
+    reset(arr)
 }
-//stroke post cycle,moveTo before:Done
-//get used to gitHub
-//graphics:DONE
-//find analogs
-//canvas transformations:DONE
+class State{
+    #tasks
+    #index
+
+    constructor(tasks) {
+        this.#tasks = tasks
+    }
+    changeTask(index){
+        if(index < this.#tasks.length){
+            this.#index = index
+            return this.#tasks[index]
+        }else{
+            return -1
+        }
+    }
+    addTask(task){
+        if(task instanceof Task) {
+            this.#tasks.push(task)
+        }
+    }
+}
 class Task{
     constructor(range,form,canvas,scale) {
         this.formula = form
@@ -62,11 +61,33 @@ function guessdraw(){
     console.log(x.formula)
     x.draw("coral")
 }
-function update(){
+function reset(arr){
+    const canvas = document.getElementById("myCanvas");
+    const ctx = canvas.getContext("2d");
+    ctx.beginPath()
+    ctx.rect(-400,-400,800,800)
+    ctx.fillStyle = "#BCD7D4" ;
+    ctx.fill();
+    for (let i = -canvas.height; i < canvas.height; i+=40) {
+        i === 0? ctx.strokeStyle = "black" : ctx.strokeStyle = "grey"
+        ctx.beginPath()
+        ctx.moveTo(canvas.width,i)
+        ctx.lineTo(-canvas.width,i)
+        ctx.stroke()
+    }
+    for (let i = -canvas.width; i < canvas.width; i+=40) {
+        i === 0? ctx.strokeStyle = "#000000" : ctx.strokeStyle = "grey"
+        ctx.beginPath()
+        ctx.moveTo(i,-canvas.height)
+        ctx.lineTo(i,canvas.height)
+        ctx.stroke()
+    }
+    initialize(1,arr)
+
+}
+function update(IofTask,tasksarr){
     let anform = document.getElementById("input").value
-    let form = "x ** 2"
-    let f = new Task(10,form,document.getElementById("myCanvas"),40)
-    f.draw()
+    let f = tasksarr[IofTask]
     if (f.checkAnswer(anform)){
         f.draw("green")
         console.log("correct")
@@ -74,4 +95,20 @@ function update(){
         f.draw("red")
         console.log("Incorrect")
     }
+}
+function initialize(IofTask,taskarr){
+    let f = taskarr[IofTask]
+    f.draw()
+}
+function addtasks(){
+    let canvas = document.getElementById("myCanvas")
+    let scalse = 40
+    let range = 10
+    let arr = []
+    arr.push(new Task(range,"x ** 2 + 3",canvas,scalse))
+    arr.push(new Task(range,"x ** 4 + 1",canvas,scalse))
+    arr.push(new Task(range,"x + 3",canvas,scalse))
+    arr.push(new Task(range,"x ** 3",canvas,scalse))
+    arr.push(new Task(range,"3 * x - 2",canvas,scalse))
+    return arr
 }
