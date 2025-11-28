@@ -37,6 +37,7 @@ class Task{
     draw(color) {
         this.ctx.strokeStyle = color
         let x = -this.range
+
         this.ctx.beginPath()
         this.ctx.moveTo(x.toFixed(4) *  this.scale, eval(this.formula).toFixed(4) * this.scale)
         for (x = -this.range; x < this.range; x += 0.1) {
@@ -98,7 +99,7 @@ function update(IofTask,tasksarr){
 }
 function initialize(IofTask,taskarr){
     let f = taskarr[IofTask]
-    f.draw()
+    f.draw("#000000")
 }
 function addtasks(){
     let canvas = document.getElementById("myCanvas")
