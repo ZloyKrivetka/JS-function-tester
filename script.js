@@ -3,8 +3,10 @@
         tasks
         index
 
+
         constructor() {
             this.index = 0
+            this.correctness = new Map
         }
         addTask(task) {
             if (task instanceof Task) {
@@ -18,6 +20,9 @@
             arr.push(new Task(range, "x ** 2 + 3"))
             arr.push(new Task(range, "x ** 4 + 1"))
             arr.push(new Task(range, "x + 3"))
+            arr.push(new Task(range, "Math.sin(x)+ 3"))
+            arr.push(new Task(range, "Math.sin(x)"))
+            arr.push(new Task(range, "Math.cos(2 * x)"))
             this.tasks = arr
             console.log(this.tasks)
         }
@@ -26,6 +31,17 @@
         }
         getTask(){
             return this.tasks[this.index]
+        }
+        checkCorectness(ans){
+            let x = this.getTask()
+            return x.checkAnswer(ans)
+        }
+        setCor(){
+            this.correctness.set(this.index,true)
+            console.log(this.correctness)
+        }
+        setInCor(){
+            this.correctness.set(this.index,false)
         }
     }
 
@@ -77,22 +93,34 @@
                     state.updateState(i)
                     this.draw(state.tasks[i]);
                 }
-                let t = document.createTextNode(`Task ${i+1}\n${state.tasks[i].formula};`)
+                let t = document.createTextNode(`Task ${i+1}`)
                 btn.appendChild(t);
-                document.body.appendChild(btn);
+
+                document.getElementById("rightdiv").appendChild(btn);
 
             }
         }
-
+        correct(){
+            this.ctx.beginPath()
+            this.ctx.rect(-400, -400, 800, 800)
+            this.ctx.fillStyle = "rgba(95,245,87,0.11)";
+            this.ctx.fill();
+        }
+        incorrect(){
+            this.ctx.beginPath()
+            this.ctx.rect(-400, -400, 800, 800)
+            this.ctx.fillStyle = "rgba(211,21,21,0.44)";
+            this.ctx.fill();
+        }
         draw(task) {
             console.log(task)
-            this.ctx.strokeStyle = this.color
             let r = task.range
             let f = task.formula
             this.DrowLines()
             console.log(f)
             let x = -r
-
+            console.log(this.color)
+            this.ctx.strokeStyle = this.color
             this.ctx.beginPath()
             this.ctx.moveTo(x.toFixed(4) * this.scale, eval(f).toFixed(4) * this.scale)
 
@@ -111,6 +139,10 @@
             }else {
                 return a.value
             }
+        }
+        clr(id,color){
+            let btn = document.getElementById(`${id}`)
+            btn.style.backgroundColor = color
         }
     }
 
@@ -132,14 +164,16 @@
 
 
     function main() {
-        console.log("SMTH")
         let g = new State()
         g.Addtasks()
         console.log(g.tasks)
         let v = new View(40)
         v.Translate()
+        for (let i = 0; i < 40; i++) {
+            g.addTask(new Task(10,`x ** ${i/2}`))
+
+        }
         v.DrowLines()
-        console.log("aaa")
         v.addButtons(g)
         let a = document.getElementById("check")
         a.onclick = () =>{
@@ -148,11 +182,13 @@
                 console.log("Incorrect")
                 return
             }
-            if (g.getTask().checkAnswer(k)){
-
-                console.log("Correct")
+            if (g.checkCorectness(k)){
+                g.setCor()
+                v.correct()
+                v.clr(g.index,"green")
             }else{
-                console.log("Incorrect")
+                v.incorrect()
+                v.clr(g.index,"red")
             }
         }
 
