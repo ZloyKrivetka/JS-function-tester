@@ -4,6 +4,7 @@
         index
 
         constructor() {
+            this.index = 0
         }
         addTask(task) {
             if (task instanceof Task) {
@@ -19,6 +20,12 @@
             arr.push(new Task(range, "x + 3"))
             this.tasks = arr
             console.log(this.tasks)
+        }
+        updateState(i){
+            this.index=i
+        }
+        getTask(){
+            return this.tasks[this.index]
         }
     }
 
@@ -67,7 +74,7 @@
                 let btn = document.createElement("button")
                 btn.id = `${i}`
                 btn.onclick = () => {
-                    this.index = i
+                    state.updateState(i)
                     this.draw(state.tasks[i]);
                 }
                 let t = document.createTextNode(`Task ${i+1}\n${state.tasks[i].formula};`)
@@ -98,9 +105,13 @@
         }
         getAnswer(){
             let a = document.getElementById("input")
-            return a.value
+            if(a.value == 0 || a.value === "Write Answer"){
+                console.log("Please,type the formula")
+                return false
+            }else {
+                return a.value
+            }
         }
-
     }
 
     class Task {
@@ -133,8 +144,15 @@
         let a = document.getElementById("check")
         a.onclick = () =>{
             let k = v.getAnswer()
-            if (g.tasks[v.index].checkAnswer(k)){
-                console.log("COrrect")
+            if(!k){
+                console.log("Incorrect")
+                return
+            }
+            if (g.getTask().checkAnswer(k)){
+
+                console.log("Correct")
+            }else{
+                console.log("Incorrect")
             }
         }
 
