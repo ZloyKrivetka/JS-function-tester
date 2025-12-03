@@ -1,115 +1,145 @@
-function drawcoordlines(arr){
-    const canvas = document.getElementById("myCanvas");
-    const ctx = canvas.getContext("2d");
-    ctx.translate(canvas.height/2,canvas.width/2)
-    ctx.scale(1,-1)
-    reset(arr)
-}
-class State{
-    #tasks
-    #index
+(() => {
+    class State {
+        tasks
+        index
 
-    constructor(tasks) {
-        this.#tasks = tasks
-    }
-    changeTask(index){
-        if(index < this.#tasks.length){
-            this.#index = index
-            return this.#tasks[index]
-        }else{
-            return -1
+        constructor() {
         }
-    }
-    addTask(task){
-        if(task instanceof Task) {
-            this.#tasks.push(task)
-        }
-    }
-}
-class Task{
-    constructor(range,form,canvas,scale) {
-        this.formula = form
-        this.ctx = canvas.getContext("2d")
-        this.range = range
-        this.scale = scale
-
-    }
-    draw(color) {
-        this.ctx.strokeStyle = color
-        let x = -this.range
-
-        this.ctx.beginPath()
-        this.ctx.moveTo(x.toFixed(4) *  this.scale, eval(this.formula).toFixed(4) * this.scale)
-        for (x = -this.range; x < this.range; x += 0.1) {
-            if (x === 0) continue
-            let y = eval(this.formula)
-            this.ctx.lineTo(x.toFixed(4) * this.scale, y.toFixed(4) * this.scale)
-        }
-        this.ctx.stroke()
-    }
-    checkAnswer(anForm){
-        for (let x = -this.range; x < this.range; x+= 0.5) {
-            if(eval(anForm).toFixed(4) !== eval(this.formula).toFixed(4)){
-                return false
+        addTask(task) {
+            if (task instanceof Task) {
+                this.tasks.push(task)
             }
         }
-        return true
-    }
-}
-function guessdraw(){
-    let anform = document.getElementById("input").value
-    let x = new Task(10,anform,document.getElementById("myCanvas",),40)
-    console.log(x.formula)
-    x.draw("coral")
-}
-function reset(arr){
-    const canvas = document.getElementById("myCanvas");
-    const ctx = canvas.getContext("2d");
-    ctx.beginPath()
-    ctx.rect(-400,-400,800,800)
-    ctx.fillStyle = "#BCD7D4" ;
-    ctx.fill();
-    for (let i = -canvas.height; i < canvas.height; i+=40) {
-        i === 0? ctx.strokeStyle = "black" : ctx.strokeStyle = "grey"
-        ctx.beginPath()
-        ctx.moveTo(canvas.width,i)
-        ctx.lineTo(-canvas.width,i)
-        ctx.stroke()
-    }
-    for (let i = -canvas.width; i < canvas.width; i+=40) {
-        i === 0? ctx.strokeStyle = "#000000" : ctx.strokeStyle = "grey"
-        ctx.beginPath()
-        ctx.moveTo(i,-canvas.height)
-        ctx.lineTo(i,canvas.height)
-        ctx.stroke()
-    }
-    initialize(1,arr)
 
-}
-function update(IofTask,tasksarr){
-    let anform = document.getElementById("input").value
-    let f = tasksarr[IofTask]
-    if (f.checkAnswer(anform)){
-        f.draw("green")
-        console.log("correct")
-    }else{
-        f.draw("red")
-        console.log("Incorrect")
+        Addtasks() {
+            let range = 10
+            let arr = []
+            arr.push(new Task(range, "x ** 2 + 3"))
+            arr.push(new Task(range, "x ** 4 + 1"))
+            arr.push(new Task(range, "x + 3"))
+            this.tasks = arr
+            console.log(this.tasks)
+        }
     }
-}
-function initialize(IofTask,taskarr){
-    let f = taskarr[IofTask]
-    f.draw("#000000")
-}
-function addtasks(){
-    let canvas = document.getElementById("myCanvas")
-    let scalse = 40
-    let range = 10
-    let arr = []
-    arr.push(new Task(range,"x ** 2 + 3",canvas,scalse))
-    arr.push(new Task(range,"x ** 4 + 1",canvas,scalse))
-    arr.push(new Task(range,"x + 3",canvas,scalse))
-    arr.push(new Task(range,"x ** 3",canvas,scalse))
-    arr.push(new Task(range,"3 * x - 2",canvas,scalse))
-    return arr
-}
+
+    class View {
+        color
+        scale
+
+        constructor(scale) {
+            this.doc = document.getElementById("canvas")
+            console.log(this.doc)
+            this.ctx = this.doc.getContext("2d")
+            this.scale = scale
+            this.color = "#000000"
+        }
+
+        Translate() {
+            this.ctx.translate(this.doc.height / 2, this.doc.width / 2)
+            this.ctx.scale(1, -1)
+            console.log("translated")
+        }
+
+        DrowLines() {
+            this.ctx.beginPath()
+            this.ctx.rect(-400, -400, 800, 800)
+            this.ctx.fillStyle = "#BCD7D4";
+            this.ctx.fill();
+            for (let i = -this.doc.height; i < this.doc.height; i += 40) {
+                i === 0 ? this.ctx.strokeStyle = "black" : this.ctx.strokeStyle = "grey"
+                this.ctx.beginPath()
+                this.ctx.moveTo(this.doc.width, i)
+                this.ctx.lineTo(-this.doc.width, i)
+                this.ctx.stroke()
+            }
+            for (let i = -this.doc.width; i < this.doc.width; i += 40) {
+                i === 0 ? this.ctx.strokeStyle = "#000000" : this.ctx.strokeStyle = "grey"
+                this.ctx.beginPath()
+                this.ctx.moveTo(i, -this.doc.height)
+                this.ctx.lineTo(i, this.doc.height)
+                this.ctx.stroke()
+            }
+
+        }
+
+        addButtons(state) {
+            for (let i = 0; i < state.tasks.length; i++) {
+                let btn = document.createElement("button")
+                btn.id = `${i}`
+                btn.onclick = () => {
+                    this.index = i
+                    this.draw(state.tasks[i]);
+                }
+                let t = document.createTextNode(`Task ${i+1}\n${state.tasks[i].formula};`)
+                btn.appendChild(t);
+                document.body.appendChild(btn);
+
+            }
+        }
+
+        draw(task) {
+            console.log(task)
+            this.ctx.strokeStyle = this.color
+            let r = task.range
+            let f = task.formula
+            this.DrowLines()
+            console.log(f)
+            let x = -r
+
+            this.ctx.beginPath()
+            this.ctx.moveTo(x.toFixed(4) * this.scale, eval(f).toFixed(4) * this.scale)
+
+            for (x = -r; x < r; x += 0.1) {
+                if (x === 0) continue
+                let y = eval(f)
+                this.ctx.lineTo(x.toFixed(4) * this.scale, y.toFixed(4) * this.scale)
+            }
+            this.ctx.stroke()
+        }
+        getAnswer(){
+            let a = document.getElementById("input")
+            return a.value
+        }
+
+    }
+
+    class Task {
+        constructor(range, form) {
+            this.formula = form
+            this.range = range
+        }
+
+        checkAnswer(anForm) {
+            for (let x = -this.range; x < this.range; x += 0.5) {
+                if (eval(anForm).toFixed(4) !== eval(this.formula).toFixed(4)) {
+                    return false
+                }
+            }
+            return true
+        }
+    }
+
+
+    function main() {
+        console.log("SMTH")
+        let g = new State()
+        g.Addtasks()
+        console.log(g.tasks)
+        let v = new View(40)
+        v.Translate()
+        v.DrowLines()
+        console.log("aaa")
+        v.addButtons(g)
+        let a = document.getElementById("check")
+        a.onclick = () =>{
+            let k = v.getAnswer()
+            if (g.tasks[v.index].checkAnswer(k)){
+                console.log("COrrect")
+            }
+        }
+
+
+    }
+
+    window.onload = main
+})()
