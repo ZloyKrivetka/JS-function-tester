@@ -64,6 +64,9 @@ body {
     color: white;
     border-style: none;
 }
+#score{
+    color: white;
+}
 
 @media (max-width: 768px) {
     .layout-container {

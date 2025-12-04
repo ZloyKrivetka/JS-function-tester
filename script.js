@@ -24,7 +24,8 @@
             arr.push(new Task(range, "Math.sin(x)"))
             arr.push(new Task(range, "Math.cos(2 * x)"))
             this.tasks = arr
-            console.log(this.tasks)
+            this.alltsk = this.tasks.length
+            this.crctsk = 0
         }
         updateState(i){
             this.index=i
@@ -38,7 +39,7 @@
         }
         setCor(){
             this.correctness.set(this.index,true)
-            console.log(this.correctness)
+            this.crctsk++
         }
         setInCor(){
             this.correctness.set(this.index,false)
@@ -53,6 +54,7 @@
             this.doc = document.getElementById("canvas")
             console.log(this.doc)
             this.ctx = this.doc.getContext("2d")
+            this.score = document.getElementById("score")
             this.scale = scale
             this.color = "#000000"
         }
@@ -63,10 +65,10 @@
             console.log("translated")
         }
 
-        DrowLines() {
+        DrowLines(backcol) {
             this.ctx.beginPath()
             this.ctx.rect(-400, -400, 800, 800)
-            this.ctx.fillStyle = "#BCD7D4";
+            this.ctx.fillStyle = backcol;
             this.ctx.fill();
             for (let i = -this.doc.height; i < this.doc.height; i += 40) {
                 i === 0 ? this.ctx.strokeStyle = "black" : this.ctx.strokeStyle = "grey"
@@ -86,12 +88,13 @@
         }
 
         addButtons(state) {
+            this.score.innerText = `0/${state.tasks.length}`
             for (let i = 0; i < state.tasks.length; i++) {
                 let btn = document.createElement("button")
                 btn.id = `${i}`
                 btn.onclick = () => {
                     state.updateState(i)
-                    this.draw(state.tasks[i]);
+                    this.draw(state.tasks[i],state.correctness.get(i));
                 }
                 let t = document.createTextNode(`Task ${i+1}`)
                 btn.appendChild(t);
@@ -103,21 +106,28 @@
         correct(){
             this.ctx.beginPath()
             this.ctx.rect(-400, -400, 800, 800)
-            this.ctx.fillStyle = "rgba(95,245,87,0.11)";
+            this.ctx.fillStyle = "green";
             this.ctx.fill();
         }
         incorrect(){
             this.ctx.beginPath()
             this.ctx.rect(-400, -400, 800, 800)
-            this.ctx.fillStyle = "rgba(211,21,21,0.44)";
+            this.ctx.fillStyle = "red";
             this.ctx.fill();
         }
-        draw(task) {
+        draw(task,cor) {
             console.log(task)
             let r = task.range
             let f = task.formula
-            this.DrowLines()
-            console.log(f)
+            if(cor === undefined){
+                this.DrowLines("#ffffff")
+            }else {
+                if (!cor) {
+                    this.DrowLines("red")
+                } else {
+                    this.DrowLines("green")
+                }
+            }
             let x = -r
             console.log(this.color)
             this.ctx.strokeStyle = this.color
@@ -130,6 +140,9 @@
                 this.ctx.lineTo(x.toFixed(4) * this.scale, y.toFixed(4) * this.scale)
             }
             this.ctx.stroke()
+        }
+        updateScore(state){
+            this.score.innerText = `${state.crctsk}/${state.alltsk}`
         }
         getAnswer(){
             let a = document.getElementById("input")
@@ -145,13 +158,12 @@
             btn.style.backgroundColor = color
         }
     }
-
+//-------------------------------------------------------
     class Task {
         constructor(range, form) {
             this.formula = form
             this.range = range
         }
-
         checkAnswer(anForm) {
             for (let x = -this.range; x < this.range; x += 0.5) {
                 if (eval(anForm).toFixed(4) !== eval(this.formula).toFixed(4)) {
@@ -161,18 +173,14 @@
             return true
         }
     }
-
+//-------------------------------------------------------
 
     function main() {
         let g = new State()
         g.Addtasks()
-        console.log(g.tasks)
+        console.log(g)
         let v = new View(40)
         v.Translate()
-        for (let i = 0; i < 40; i++) {
-            g.addTask(new Task(10,`x ** ${i/2}`))
-
-        }
         v.DrowLines()
         v.addButtons(g)
         let a = document.getElementById("check")
@@ -184,10 +192,12 @@
             }
             if (g.checkCorectness(k)){
                 g.setCor()
+                v.updateScore(g)
                 v.correct()
                 v.clr(g.index,"green")
             }else{
                 v.incorrect()
+                g.setInCor()
                 v.clr(g.index,"red")
             }
         }
