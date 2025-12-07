@@ -4,27 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Document</title>
-    <script src="script.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+    >
 </head>
 <header>
 
 </header>
 <body>
 <div class="layout-container">
-<div id="leftdiv">
-    <textarea id="input"></textarea>
+<div id="info-div">
+
     <button id="check">CHECK</button>
     <span id="score">0/20</span>
 </div>
-<div id="rightdiv"></div>
-<div id="canvasdiv">
-<canvas width="800" height="800" id="canvas"></canvas>
-
-
+<div id="Buttons-div"></div>
+<div id="canvas-div">
+<canvas width="800" height="800" id="Visualizer"></canvas>
+    <textarea id="formulas-textarea"></textarea>
 </div>
 </div>
 </body>
+<script type="module" src="./script.js"></script>
 <footer>
 
 </footer>
